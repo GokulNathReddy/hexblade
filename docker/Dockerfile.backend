@@ -1,0 +1,92 @@
+FROM python:3.11-slim
+
+# Install base tools available in Debian repos
+RUN apt-get update && apt-get install -y \
+    nmap \
+    curl \
+    wget \
+    whois \
+    dnsutils \
+    netcat-openbsd \
+    sqlmap \
+    hydra \
+    john \
+    gobuster \
+    git \
+    ruby \
+    ruby-dev \
+    build-essential \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    zlib1g-dev \
+    python3-pip \
+    golang-go \
+    perl \
+    libnet-ssleay-perl \
+    libio-socket-ssl-perl \
+    dirb \
+    hashcat \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install whatweb via git (more reliable than apt)
+RUN git clone https://github.com/urbanadventurer/WhatWeb.git /opt/whatweb && \
+    ln -s /opt/whatweb/whatweb /usr/local/bin/whatweb && \
+    chmod +x /opt/whatweb/whatweb
+
+# Install nikto via git
+RUN git clone https://github.com/sullo/nikto.git /opt/nikto && \
+    ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto && \
+    chmod +x /opt/nikto/program/nikto.pl
+
+# Install wpscan via Ruby gem
+RUN gem install wpscan
+
+# Install ffuf (Go)
+RUN go install github.com/ffuf/ffuf/v2@latest && \
+    cp /root/go/bin/ffuf /usr/local/bin/ffuf
+
+# Install subfinder (Go)
+RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
+    cp /root/go/bin/subfinder /usr/local/bin/subfinder
+
+# Install httpx (Go)
+RUN go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest && \
+    cp /root/go/bin/httpx /usr/local/bin/httpx
+
+# Install feroxbuster binary directly (no cargo needed)
+RUN wget -q https://github.com/epi052/feroxbuster/releases/latest/download/feroxbuster_amd64.deb && \
+    dpkg -i feroxbuster_amd64.deb && \
+    rm feroxbuster_amd64.deb || \
+    wget -q -O /usr/local/bin/feroxbuster \
+    https://github.com/epi052/feroxbuster/releases/latest/download/feroxbuster-linux-amd64 && \
+    chmod +x /usr/local/bin/feroxbuster || true
+
+# Install dirsearch
+RUN git clone https://github.com/maurosoria/dirsearch.git /opt/dirsearch && \
+    pip3 install -r /opt/dirsearch/requirements.txt --break-system-packages && \
+    echo '#!/bin/bash\npython3 /opt/dirsearch/dirsearch.py "$@"' > /usr/local/bin/dirsearch && \
+    chmod +x /usr/local/bin/dirsearch
+
+# Install XSStrike
+RUN git clone https://github.com/s0md3v/XSStrike.git /opt/XSStrike && \
+    pip3 install -r /opt/XSStrike/requirements.txt --break-system-packages
+
+# Install commix
+RUN git clone https://github.com/commixproject/commix.git /opt/commix && \
+    echo '#!/bin/bash\npython3 /opt/commix/commix.py "$@"' > /usr/local/bin/commix && \
+    chmod +x /usr/local/bin/commix
+
+# Install wordlists
+RUN apt-get update && apt-get install -y wordlists && rm -rf /var/lib/apt/lists/* || \
+    (mkdir -p /usr/share/wordlists && \
+     wget -q -O /usr/share/wordlists/common.txt \
+     https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt || true)
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt --break-system-packages
+
+COPY main.py .
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

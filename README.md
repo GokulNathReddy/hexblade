@@ -2,6 +2,12 @@
 
 Browser-based swiss army knife for web pentesting. 20+ tools in one clean hacker UI. Pick a tool, paste a target, fire.
 
+<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/97a13c16-ae5a-4a9f-a1f8-03d74386836d" />
+simple UI include all the essential tools for web reconnaissance.
+
+more features will be added soon!!
+
+
 ## Tools
 Nmap, Gobuster, ffuf, Feroxbuster, Dirsearch, Subfinder, httpx, WhatWeb, SQLmap, XSStrike, Commix, WPScan, Nikto, Hashcat, John, Hydra, cURL, Netcat, Dig, Whois
 

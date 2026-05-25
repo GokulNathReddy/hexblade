@@ -100,6 +100,138 @@ const MOCK_MESSAGES = [
   "CLEARING ENCRYPTED TEMP FILES...",
 ];
 
+const CLIENT_MOCK_REPORTS = {
+  nmap: [
+    "Starting Nmap 7.94 ( https://nmap.org ) at 2026-05-25 23:05",
+    "Initiating Ping Scan at 23:05",
+    "Scanning target_host (142.250.190.46) [1 port]",
+    "Completed Ping Scan at 23:05, 0.04s elapsed",
+    "Initiating Parallel DNS resolution of 1 IP address at 23:05",
+    "Completed Parallel DNS resolution at 23:05, 0.08s elapsed",
+    "Initiating SYN Stealth Scan at 23:05",
+    "Scanning target_host (142.250.190.46) [1000 ports]",
+    "Discovered open port 80/tcp on 142.250.190.46",
+    "Discovered open port 443/tcp on 142.250.190.46",
+    "Completed SYN Stealth Scan at 23:05, 1.25s elapsed (1000 total ports)",
+    "Initiating Service scan at 23:05",
+    "Scanning 2 services on target_host (142.250.190.46)",
+    "Completed Service scan at 23:05, 1.88s elapsed",
+    "Nmap scan report for target_host (142.250.190.46)",
+    "Host is up (0.012s latency).",
+    "rDNS record for 142.250.190.46: lga34s36-in-f14.1e100.net",
+    "Not shown: 998 filtered tcp ports (no-response)",
+    "PORT    STATE SERVICE  VERSION",
+    "80/tcp  open  http     gws",
+    "443/tcp open  ssl/http gws",
+    "|_http-title: Exploit Target Sandbox Home",
+    "| ssl-cert: Subject: commonName=*.google.com",
+    "Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel",
+    "",
+    "Nmap done: 1 IP address (1 host up) scanned in 3.45 seconds"
+  ],
+  gobuster: [
+    "===============================================================",
+    "Gobuster v3.6",
+    "by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)",
+    "===============================================================",
+    "[+] Url:                     https://target_url",
+    "[+] Method:                  GET",
+    "[+] Threads:                 10",
+    "[+] Wordlist:                /usr/share/wordlists/dirb/common.txt",
+    "[+] Negative Status codes:   404",
+    "[+] User Agent:              gobuster/3.6",
+    "===============================================================",
+    "Starting gobuster in directory busting mode",
+    "===============================================================",
+    "/index.html           (Status: 200) [Size: 12432]",
+    "/images               (Status: 301) [Size: 310] [--> https://target_url/images/]",
+    "/search               (Status: 200) [Size: 45012]",
+    "/login                (Status: 200) [Size: 3102]",
+    "/admin                (Status: 401) [Size: 220] (Requires Basic Auth)",
+    "/robots.txt           (Status: 200) [Size: 180]",
+    "/dashboard            (Status: 302) [Size: 0] [--> https://target_url/login]",
+    "/assets               (Status: 301) [Size: 312] [--> https://target_url/assets/]",
+    "/api                  (Status: 200) [Size: 1543]",
+    "===============================================================",
+    "Finished",
+    "==============================================================="
+  ],
+  sqlmap: [
+    "        ___",
+    "       __H__",
+    " ___ ___[.]_____ ___ ___  {1.8.2#stable}",
+    "|_ -| . [']     | .'| . |",
+    "|___|_  [.]_|_|_|__,|  _|",
+    "      |_| think      |_|   https://sqlmap.org",
+    "",
+    "[*] starting @ 23:06:12 /2026-05-25/",
+    "",
+    "[INFO] testing connection to the target URL",
+    "[INFO] checking if the target is protected by some WAF/IPS",
+    "[INFO] testing if the target URL is stable",
+    "[INFO] testing if HTTP parameter 'id' is dynamic",
+    "[WARNING] heuristic (basic) test shows that GET parameter 'id' might not be injectable",
+    "[INFO] testing for SQL injection on GET parameter 'id'",
+    "[INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'",
+    "[INFO] GET parameter 'id' appears to be 'AND boolean-based blind - WHERE or HAVING clause' injectable",
+    "[INFO] testing 'Generic UNION query [1 to 20 columns]'",
+    "[INFO] target DBMS is MySQL",
+    "GET parameter 'id' is vulnerable. Do you want to keep testing the others? [y/N] N",
+    "sqlmap identified the following injection point(s) with a total of 42 HTTP requests:",
+    "---",
+    "Parameter: id (GET)",
+    "    Type: boolean-based blind",
+    "    Title: AND boolean-based blind - WHERE or HAVING clause",
+    "    Payload: id=1 AND 2931=2931",
+    "---",
+    "[INFO] fetched DBMS: MySQL >= 5.6",
+    "[INFO] active database: 'hexblade_db'",
+    "[INFO] current user: 'db_admin@localhost'",
+    "[INFO] testing completed successfully"
+  ],
+  ffuf: [
+    "",
+    "        /'___\\  /'___\\           ",
+    "       /\\ \\__/ /\\ \\__/  __  __   ",
+    "       \\ \\ ,__\\\\ \\ ,__\\/\\ \\/\\ \\  ",
+    "        \\ \\ \\_/ \\ \\ \\_\\/\\ \\ \\_\\ \\ ",
+    "         \\ \\_\\   \\ \\_\\  \\ \\____/ ",
+    "          \\/_/    \\/_/   \\/___/  ",
+    "",
+    "       v2.1.0-dev",
+    "________________________________________________",
+    "",
+    " :: Method           : GET",
+    " :: URL              : https://target_url/FUZZ",
+    " :: Wordlist         : /usr/share/wordlists/dirb/common.txt",
+    " :: Follow Redirects : false",
+    " :: Calibration      : false",
+    " :: Timeout          : 10",
+    " :: Threads          : 40",
+    "________________________________________________",
+    "",
+    ".htaccess               [Status: 403, Size: 277, Words: 20, Lines: 10, Duration: 35ms]",
+    "admin                   [Status: 301, Size: 312, Words: 20, Lines: 10, Duration: 38ms]",
+    "config.php              [Status: 200, Size: 0, Words: 1, Lines: 1, Duration: 40ms]",
+    "index.php               [Status: 200, Size: 1242, Words: 285, Lines: 42, Duration: 32ms]",
+    "robots.txt              [Status: 200, Size: 154, Words: 12, Lines: 8, Duration: 30ms]",
+    ":: Progress: [4612/4612] :: Job [1/1] :: 120 req/sec :: Duration: [00:00:38] :: Errors: 0 ::"
+  ]
+};
+
+const DEFAULT_CLIENT_MOCK = [
+  "[INFO] Executing simulated cyber analysis stream...",
+  "[INFO] Initializing connection to target endpoint...",
+  "[INFO] Performing quick diagnostic probe...",
+  "PORT      STATE    SERVICE",
+  "22/tcp    open     ssh",
+  "80/tcp    open     http",
+  "443/tcp   open     https",
+  "8080/tcp  closed   http-proxy",
+  "[INFO] Security check completed.",
+  "STATUS: DONE"
+];
+
 // Synth Sound Player
 const playSynthSound = (type, isMuted) => {
   if (isMuted) return;
@@ -592,12 +724,48 @@ export default function HexBlade() {
       playSynthSound("error", isMuted);
       setOutput((prev) => [
         ...prev,
-        { type: "error", data: "⚠️ DISPATCH FAILED — BACKEND UNREACHABLE. IS DOCKER-COMPOSE RUNNING?" },
+        { type: "error", data: "⚠️ HOST BACKEND OFFLINE. INITIALIZING CYBER-DECK EMULATOR FALLBACK..." }
       ]);
-      setRunning(false);
+
+      // Delay a little before starting client simulation to feel realistic
+      const timeoutId = setTimeout(() => {
+        setOutput((prev) => [
+          ...prev,
+          { type: "info", data: `✨ SECURE CLIENT DECK ACTIVE: Simulating ${selectedTool.name.toUpperCase()} against ${target}...` }
+        ]);
+
+        const mockLines = CLIENT_MOCK_REPORTS[selectedTool.id] || DEFAULT_CLIENT_MOCK;
+        let index = 0;
+
+        const intervalId = setInterval(() => {
+          if (index < mockLines.length) {
+            setOutput((prev) => [...prev, { type: "output", data: mockLines[index] }]);
+            index++;
+          } else {
+            clearInterval(intervalId);
+            playSynthSound("success", isMuted);
+            setOutput((prev) => [...prev, { type: "done", data: "Simulation completed successfully. [Client-Side Demo Mode]" }]);
+            setRunning(false);
+          }
+        }, 220);
+
+        // Allow Stop button to cancel active client intervals
+        wsRef.current = {
+          close: () => {
+            clearInterval(intervalId);
+          }
+        };
+      }, 1000);
+
+      // Allow Stop button to cancel active timeout
+      wsRef.current = {
+        close: () => {
+          clearTimeout(timeoutId);
+        }
+      };
     };
 
-    ws.onclose = () => setRunning(false);
+    ws.onclose = () => {};
   }, [target, flags, selectedTool, running, isMuted]);
 
   const handleStop = () => {

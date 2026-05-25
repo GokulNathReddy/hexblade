@@ -1,21 +1,43 @@
 # 🗡️ HexBlade — Web Exploitation Toolkit
 
-Browser-based swiss army knife for web pentesting. 20+ tools in one clean hacker UI. Pick a tool, paste a target, fire.
+Browser-based swiss army knife for web pentesting. 20+ tools in one stunning hacker HUD. Pick a tool, paste a target, fire.
 
-<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/97a13c16-ae5a-4a9f-a1f8-03d74386836d" />
-simple UI include all the essential tools for web reconnaissance.
+## Features
 
-more features will be added soon!!
+- **Cyberpunk HUD Interface** — Matrix rain, CRT scanlines, synth sound effects
+- **20+ Security Tools** — Nmap, Gobuster, ffuf, SQLmap, XSStrike, Hydra, and more
+- **Real-time Terminal** — Live WebSocket output with search, copy, and export
+- **Client-Side Demo** — Works standalone without backend for showcasing
+- **System Telemetry** — Animated CPU/RAM gauges and wave spectrum
 
+## Architecture
+
+| Component | Repo | Host |
+|-----------|------|------|
+| Frontend (React + Vite) | [hexblade](https://github.com/GokulNathReddy/hexblade) | Vercel |
+| Backend (FastAPI + WebSocket) | [hexblade-backend](https://github.com/GokulNathReddy/hexblade-backend) | Render |
+
+## Quick Start (Local)
+
+```bash
+# Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+## Connect to Backend
+
+Set this environment variable in Vercel to connect to your deployed backend:
+
+```
+VITE_BACKEND_WS=wss://your-render-url.onrender.com/ws/run
+```
+
+Without this variable, the frontend runs in **Demo Mode** with simulated scan output.
 
 ## Tools
+
 Nmap, Gobuster, ffuf, Feroxbuster, Dirsearch, Subfinder, httpx, WhatWeb, SQLmap, XSStrike, Commix, WPScan, Nikto, Hashcat, John, Hydra, cURL, Netcat, Dig, Whois
-
-## Quick Start
-git clone https://github.com/GokulNathReddy/hexblade
-cd hexblade
-docker-compose up --build
-
-Then open http://localhost:3000
 
 ## ⚠️ For authorized penetration testing and CTF challenges only.

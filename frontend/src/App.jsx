@@ -688,6 +688,39 @@ export default function HexBlade() {
     setFlags("");
   };
 
+  // Client-side simulation engine — runs entirely in browser when backend is unavailable
+  const runClientSimulation = useCallback(() => {
+    setOutput((prev) => [
+      ...prev,
+      { type: "info", data: `$ ${selectedTool.id} ${target} ${flags}`.trim() },
+      { type: "info", data: "⚡ HEXBLADE DECK SIMULATOR ACTIVE — NO BACKEND REQUIRED" },
+      { type: "info", data: `✨ Simulating ${selectedTool.name.toUpperCase()} against ${target}...` }
+    ]);
+
+    const mockLines = CLIENT_MOCK_REPORTS[selectedTool.id] || DEFAULT_CLIENT_MOCK;
+    let index = 0;
+
+    const intervalId = setInterval(() => {
+      if (index < mockLines.length) {
+        setOutput((prev) => [...prev, { type: "output", data: mockLines[index] }]);
+        index++;
+      } else {
+        clearInterval(intervalId);
+        playSynthSound("success", isMuted);
+        setOutput((prev) => [...prev, { type: "done", data: "Scan simulation completed. [Client-Side Demo Mode — deploy backend for live scans]" }]);
+        setRunning(false);
+      }
+    }, 220);
+
+    // Allow Stop button to cancel the simulation
+    wsRef.current = {
+      close: () => {
+        clearInterval(intervalId);
+        setRunning(false);
+      }
+    };
+  }, [selectedTool, target, flags, isMuted]);
+
   const handleRun = useCallback(() => {
     if (!target.trim() || running) return;
 
@@ -695,9 +728,22 @@ export default function HexBlade() {
     setOutput([]);
     setRunning(true);
 
-    const wsUrl = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" 
-      ? "ws://localhost:8000/ws/run" 
-      : `wss://${window.location.hostname}/ws/run`;
+    // Resolve backend WebSocket URL:
+    // 1. Use VITE_BACKEND_WS env var if set (for production with a Render.com backend)
+    // 2. Fall back to localhost for local dev
+    // 3. If neither available, go straight to client-side simulation
+    const envBackend = import.meta.env.VITE_BACKEND_WS;
+    const wsUrl = envBackend
+      ? envBackend
+      : (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "ws://localhost:8000/ws/run"
+        : null;
+
+    // No backend configured → run simulation directly
+    if (!wsUrl) {
+      runClientSimulation();
+      return;
+    }
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -724,49 +770,14 @@ export default function HexBlade() {
       playSynthSound("error", isMuted);
       setOutput((prev) => [
         ...prev,
-        { type: "error", data: "⚠️ HOST BACKEND OFFLINE. INITIALIZING CYBER-DECK EMULATOR FALLBACK..." }
+        { type: "error", data: "⚠️ BACKEND UNREACHABLE — FALLING BACK TO CLIENT EMULATOR..." }
       ]);
-
-      // Delay a little before starting client simulation to feel realistic
-      const timeoutId = setTimeout(() => {
-        setOutput((prev) => [
-          ...prev,
-          { type: "info", data: `✨ SECURE CLIENT DECK ACTIVE: Simulating ${selectedTool.name.toUpperCase()} against ${target}...` }
-        ]);
-
-        const mockLines = CLIENT_MOCK_REPORTS[selectedTool.id] || DEFAULT_CLIENT_MOCK;
-        let index = 0;
-
-        const intervalId = setInterval(() => {
-          if (index < mockLines.length) {
-            setOutput((prev) => [...prev, { type: "output", data: mockLines[index] }]);
-            index++;
-          } else {
-            clearInterval(intervalId);
-            playSynthSound("success", isMuted);
-            setOutput((prev) => [...prev, { type: "done", data: "Simulation completed successfully. [Client-Side Demo Mode]" }]);
-            setRunning(false);
-          }
-        }, 220);
-
-        // Allow Stop button to cancel active client intervals
-        wsRef.current = {
-          close: () => {
-            clearInterval(intervalId);
-          }
-        };
-      }, 1000);
-
-      // Allow Stop button to cancel active timeout
-      wsRef.current = {
-        close: () => {
-          clearTimeout(timeoutId);
-        }
-      };
+      // Short delay then launch simulation
+      setTimeout(() => runClientSimulation(), 800);
     };
 
     ws.onclose = () => {};
-  }, [target, flags, selectedTool, running, isMuted]);
+  }, [target, flags, selectedTool, running, isMuted, runClientSimulation]);
 
   const handleStop = () => {
     playSynthSound("error", isMuted);
